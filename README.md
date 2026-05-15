@@ -167,7 +167,7 @@ Swagger UI is integrated using SpringDoc OpenAPI.
 Access documentation at:
 
 ```bash
-http://localhost:8080/swagger-ui/index.html
+http://localhost:8070/swagger-ui/index.html
 ```
 
 ---
