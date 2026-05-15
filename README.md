@@ -173,7 +173,7 @@ When a student is deleted:
 - The record is **not physically removed** from database.
 - A boolean flag such as 'deleted' is updated instead.
 
-![Before delete](learnspring-jpa/before_delete.png)
+![Before delete](learnspring-jpa/screenshots/before_delete.png)
 
 ## Running the Project
 
