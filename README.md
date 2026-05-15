@@ -123,6 +123,32 @@ rollNo,name,percentage,branch
 2,Ellissa,39,laoreet ut rhoncus aliquet pulvinar sed nisl nunc rhoncus dui vel
 ```
 
+## Request Logging Filter
+
+The application includes a custom request logging filter to monitor incoming HTTP requests.
+
+### Logged Information
+
+- HTTP method
+- Request URI
+- Request processing details
+- Client request information
+
+### Example Log Output
+
+```bash
+REQUEST METHOD: GET
+REQUEST URI: /api/students/all
+TIME: 2026-05-15T10:30:00
+```
+
+### Purpose
+
+- Helps debugging APIs
+- Monitors incoming requests
+- Improves backend observability
+- Assists during development and testing
+
 ### Upload Endpoint
 
 ```http
