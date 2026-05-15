@@ -142,7 +142,7 @@ REQUEST URI: /api/students/all
 TIME: 2026-05-15T10:30:00
 ```
 
-[Logging request](learnspring-jpa/screenshots)
+[Logging request](learnspring-jpa/screenshots/logging_request_filter)
 
 ### Purpose
 
