@@ -165,6 +165,19 @@ This helps track when records were created or modified and by whom.
 
 ---
 
+## Soft delete implementation
+The project uses soft delete mechanism instead of permanently removing records from the database.
+
+### How it works
+When a student is deleted:
+- The record is **not physically removed** from database.
+- A boolean flag such as 'deleted' is updated instead.
+
+![Before delete](learnspring-jpa/screenshots/before_delete.png)
+
+![After delete](learnspring-jpa/screenshots/after_delete.png)
+
+
 ## Running the Project
 
 ### Clone Repository
