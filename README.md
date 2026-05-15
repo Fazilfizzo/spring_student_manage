@@ -175,6 +175,9 @@ When a student is deleted:
 
 ![Before delete](learnspring-jpa/screenshots/before_delete.png)
 
+![After delete](learnspring-jpa/screenshots/after_delete.png)
+
+
 ## Running the Project
 
 ### Clone Repository
