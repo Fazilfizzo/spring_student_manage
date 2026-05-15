@@ -79,13 +79,37 @@ src/main/java/com/fazil/learn_spring/learnspring_jpa
 
 ---
 
-## Pagination Example
+## Pagination & Sorting
+
+The API supports pagination and dynamic sorting for efficient data retrieval.
+
+### Example Request
 
 ```http
-GET /api/students/page/all?page=0&size=10&sortByPARAMETER1=percentage&sortByPARAMETER2=name
+GET /api/students/page/all?page=0&size=5&sortByPARAMETER1=percentage&sortByPARAMETER2=name
 ```
 
----
+### Query Parameters
+
+| Parameter | Description |
+|------------|-------------|
+| `page` | Page number |
+| `size` | Number of records per page |
+| `sortByPARAMETER1` | First sorting field |
+| `sortByPARAMETER2` | Second sorting field |
+
+### Example Response
+
+[page response](learnspring-jpa/screenshots/page_response.png)
+
+- you can see the parameters for page viewing page = 4, size = 10 on Query parameters on API tester Insomnia
+
+### Benefits
+
+- Improves API performance
+- Reduces large payload responses
+- Supports scalable data retrieval
+- Allows flexible sorting
 
 ## CSV Import
 
