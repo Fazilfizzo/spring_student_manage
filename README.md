@@ -142,7 +142,7 @@ REQUEST URI: /api/students/all
 TIME: 2026-05-15T10:30:00
 ```
 
-[Logging request](learnspring-jpa/screenshots/logging_request_filter)
+[Logging request](learnspring-jpa/screenshots/logging_request_filter.png)
 
 ### Purpose
 
@@ -167,7 +167,7 @@ Swagger UI is integrated using SpringDoc OpenAPI.
 Access documentation at:
 
 ```bash
-http://localhost:8080/swagger-ui/index.html
+http://localhost:8070/swagger-ui/index.html
 ```
 
 ---
