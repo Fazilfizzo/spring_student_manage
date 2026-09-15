@@ -16,8 +16,11 @@ A Spring Boot REST API for managing student records with support for CRUD operat
 - CORS configuration
 - Swagger/OpenAPI documentation
 - MySQL database integration
+- MongoDB database implementation for document-style and key-value storage
 - Environment variable configuration
-- Auditing support:
+- Implementing circuit breaker and retry mechanism using resilience4j library and configuration 
+- Caching with Spring cache and Redis
+  - Auditing support:
   - `createdAt`
   - `updatedAt`
   - `createdBy`
@@ -36,7 +39,11 @@ A Spring Boot REST API for managing student records with support for CRUD operat
 - MapStruct
 - Apache Commons CSV
 - Swagger/OpenAPI
+- JUnit
 - Maven
+- Resilience4j
+- MongoDB
+- Redis
 
 ---
 
