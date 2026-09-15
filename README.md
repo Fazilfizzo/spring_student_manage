@@ -172,6 +172,8 @@ http://localhost:8070/swagger-ui/index.html
 
 ---
 
+[Swagger ui api documentation](learnspring-jpa/screenshots/swagger_ui.png)
+
 ## Environment Variables
 
 Sensitive credentials are configured using environment variables instead of hardcoding them in the project.
