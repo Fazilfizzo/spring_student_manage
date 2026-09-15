@@ -3,6 +3,8 @@ package com.fazil.learn_spring.learnspring_jpa.exception;
 import com.fazil.learn_spring.learnspring_jpa.dto.ApiResponse;
 import com.fazil.learn_spring.learnspring_jpa.utils.ResponseUtil;
 import jakarta.servlet.http.HttpServletRequest;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -14,10 +16,13 @@ import java.util.List;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
+    private static final Logger securityLog = LoggerFactory.getLogger("SECURITY");
+
     @ExceptionHandler(StudentException.class)
     public ResponseEntity<ApiResponse<Void>> handleStudentException(HttpServletRequest request, StudentException studentException) {
         List<String> errors = Arrays.asList(studentException.getMessage());
         ApiResponse<Void>  response = ResponseUtil.error(errors, "Student exception occured", 1000, request.getRequestURI());
+        securityLog.error("");
         return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }

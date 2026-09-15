@@ -1,0 +1,15 @@
+resilience4j:
+  retry:
+    instances:
+      csvExportService:
+        maxAttempts: 3
+        waitDuration: 1s
+
+  circuitbreaker:
+    instances:
+      csvExportService:
+        slidingWindowSize: 10
+        minimumNumberOfCalls: 5
+        failureRateThreshold: 50
+        waitDurationOpenState: 10s
+        permittedNumberOfCallsInHalfOpenState: 3

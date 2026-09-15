@@ -11,6 +11,10 @@ public class PageResponse<T> {
     private int totalPages;
     private boolean isLast;
 
+    public PageResponse() {
+
+    }
+
     public PageResponse(List<T> data, int page, int size, long totalElements, int totalPages, boolean isLast) {
         this.data = data;
         this.page = page;

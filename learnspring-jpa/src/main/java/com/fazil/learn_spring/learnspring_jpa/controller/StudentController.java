@@ -3,8 +3,10 @@ package com.fazil.learn_spring.learnspring_jpa.controller;
 import com.fazil.learn_spring.learnspring_jpa.TimeMonitor;
 import com.fazil.learn_spring.learnspring_jpa.dto.PageResponse;
 import com.fazil.learn_spring.learnspring_jpa.dto.StudentRegistrationDto;
+import com.fazil.learn_spring.learnspring_jpa.dto.StudentResponseDTO;
 import com.fazil.learn_spring.learnspring_jpa.entity.Student;
 import com.fazil.learn_spring.learnspring_jpa.repository.StudentRepository;
+import com.fazil.learn_spring.learnspring_jpa.service.CSVExportService;
 import com.fazil.learn_spring.learnspring_jpa.service.StudentService;
 import com.fazil.learn_spring.learnspring_jpa.utils.ResponseUtil;
 import io.swagger.v3.oas.annotations.Operation;
@@ -16,21 +18,30 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.persistence.EntityManager;
 import jakarta.validation.Valid;
 import org.hibernate.Session;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.InputStreamResource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/students")
 public class StudentController {
+
+    private static final Logger logger = LoggerFactory.getLogger(StudentController.class);
 
     @Value("${default.id}")
     int defaultID;
@@ -40,10 +51,12 @@ public class StudentController {
 
     private final  StudentRepository studentRepository;
     private final StudentService studentService;
+    private final CSVExportService csvExportService;
 
-    public StudentController(StudentRepository studentRepository, StudentService studentService) {
+    public StudentController(StudentRepository studentRepository, StudentService studentService, CSVExportService csvExportService) {
         this.studentRepository = studentRepository;
         this.studentService = studentService;
+        this.csvExportService = csvExportService;
     }
 
     @Operation(summary = "Get all students", description = "Returns all students in the datasource")
@@ -67,20 +80,12 @@ public class StudentController {
 
     @GetMapping("/page/all")
     public ResponseEntity<PageResponse<Student>> getPaginatedStudents(@Parameter(description = "page number", example = "0") @RequestParam(defaultValue = "0") int page,@Parameter(description = "page size", example = "10") @RequestParam(defaultValue = "10") int size, @RequestParam(defaultValue = "percentage") String sortByPARAMETER1, @RequestParam(defaultValue = "name") String sortByPARAMETER2) {
-        Page<Student> studentPage = studentService.getAllProducts(page, size, sortByPARAMETER1, sortByPARAMETER2);
-        PageResponse<Student> pageStudent = new PageResponse<>(
-                studentPage.getContent(),
-                studentPage.getNumber(),
-                studentPage.getSize(),
-                studentPage.getTotalElements(),
-                studentPage.getTotalPages(),
-                studentPage.isLast()
-        );
-        return ResponseEntity.ok(pageStudent);
+        PageResponse<Student> studentPage = studentService.getAllProducts(page, size, sortByPARAMETER1, sortByPARAMETER2);
+        return ResponseEntity.ok(studentPage);
     }
 
-    @GetMapping("/page")
-    public ResponseEntity<List<Student>> getStudentsByGrade(@RequestParam(defaultValue = "A") String category) {
+    @GetMapping("/category")
+    public ResponseEntity<List<StudentResponseDTO>> getStudentsByGrade(@RequestParam(defaultValue = "A") String category) {
           return new ResponseEntity<>(studentService.getStudentByStudentGrade(category), HttpStatus.OK);
     }
 
@@ -99,17 +104,17 @@ public class StudentController {
         return ResponseEntity.ok(pageResponse);
     }
 
-    @GetMapping("/{rollNo}")
-    public ResponseEntity<Student> getStudentByRollNo(@PathVariable int rollNo) {
-        Optional<Student> savedUser = studentRepository.findByRollNo(rollNo);
-        return   savedUser.map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.notFound().build());
-    }
-//
 //    @GetMapping("/{rollNo}")
 //    public ResponseEntity<Student> getStudentByRollNo(@PathVariable int rollNo) {
-//        return new ResponseEntity<>(studentService.getStudentByRollNo(rollNo), HttpStatus.OK);
+//        Optional<Student> savedUser = studentRepository.findByRollNo(rollNo);
+//        return   savedUser.map(ResponseEntity::ok)
+//                .orElseGet(() -> ResponseEntity.notFound().build());
 //    }
+//
+    @GetMapping("/{rollNo}")
+    public ResponseEntity<StudentResponseDTO> getStudentByRollNo(@PathVariable int rollNo) {
+        return new ResponseEntity<>(studentService.getStudent(rollNo), HttpStatus.OK);
+    }
 
 //    @GetMapping()
 //    public Student getStudentByName(@RequestParam String name) {
@@ -144,9 +149,9 @@ public class StudentController {
     }
 
     @PutMapping("/update/{id}")
-    public ResponseEntity<StudentRegistrationDto> updateStudent(@PathVariable int id, @RequestBody StudentRegistrationDto studentRegistrationDto) {
-        studentService.updateStudent(id, studentRegistrationDto);
-        return new ResponseEntity<>(studentRegistrationDto, HttpStatus.OK);
+    public ResponseEntity<StudentResponseDTO> updateStudent(@PathVariable int id, @RequestBody StudentRegistrationDto studentRegistrationDto) {
+       StudentResponseDTO studentResponseDTO =  studentService.updateStudent(id, studentRegistrationDto);
+        return new ResponseEntity<>(studentResponseDTO, HttpStatus.OK);
     }
 
 //    @DeleteMapping("/delete/{id}")
@@ -166,6 +171,25 @@ public class StudentController {
     public ResponseEntity<String> uploadFile(@RequestParam("file") List<MultipartFile> files) {
 //        studentService.upload(file);
         files.forEach(file -> studentService.upload(file));
-        return ResponseEntity.ok("UPLOADED!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+        return ResponseEntity.ok("UPLOADED!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+    }
+
+    @GetMapping("/export")
+    public ResponseEntity<InputStreamResource> exportStudentsCsv() throws Exception {
+        logger.info("starting student export request");
+
+        String filename = "students_all.csv";
+
+        InputStreamResource file = new InputStreamResource(csvExportService.processCsv());
+
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + filename)
+                .contentType(MediaType.parseMediaType("text/csv"))
+                .body(file);
+    }
+
+    @PostMapping("/settings")
+    public ResponseEntity<?> getMap(@RequestBody Map<String, Object> settings) {
+        return ResponseEntity.ok(settings);
     }
 }
